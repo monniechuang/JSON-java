@@ -1,7 +1,6 @@
 # SWE262 Milestones
 
 ### Build Instructions 
-**Building from the command line**
 
 *Build the class files from the package root directory src/main/java*
 ```shell
@@ -27,27 +26,27 @@ java -cp .:../../main/java/json-java.jar org/json/M2Test (Unix Systems)
 
 ### Running the Unit Tests
 
-navigate to the project root directory in your terminal and execute the test suite with Maven:
+*navigate to the project root directory in your terminal and execute the test suite with Maven:*
 ```shell
 mvn clean test
 ```
 
-## Milestone 2 
+# Milestone 2 
 
 ### New Functions
 - **File Path**: `src/main/java/org/json/XML.java`
 
-#### **1. static JSONObject toJSONObject(Reader reader, JSONPointer path)**
+#### **1. `static JSONObject toJSONObject(Reader reader, JSONPointer path)`**
 - **Purpose**: Read an XML file into a JSON object, and extract some smaller sub-object inside. Useful for efficiently parsing large XML files to extract targeted data without processing the entire document.
 - **Line Number**: Starts at line 937.
 
-#### **2. static JSONObject toJSONObject(Reader reader, JSONPointer path, JSONObject replacement)**
+#### **2. `static JSONObject toJSONObject(Reader reader, JSONPointer path, JSONObject replacement)`**
 - **Purpose**: 
 Modifies a segment of an XML document by replacing it on a certain key path with a new JSONObject. This method is ideal for updating XML data and converting it directly to JSON.
 
 - **Line Number**: Starts at line 989.
 
-#### **3. static boolean parseMile2(XMLTokener x, JSONObject context, String name, XMLParserConfiguration config, String specialKey, JSONObject specialData, boolean isReplaceMode)**
+#### **3. `static boolean parseMile2(XMLTokener x, JSONObject context, String name, XMLParserConfiguration config, String specialKey, JSONObject specialData, boolean isReplaceMode)`**
 - **Purpose**: A helper method used internally to navigate and parse XML content, facilitating the conversion and modification processes outlined above. It handles specific tasks like searching for elements, handling replacements, and building the JSONObject.
 - **Line Number**: Starts at line 1034.
 
