@@ -1,3 +1,69 @@
+# SWE262 Milestones
+
+### Build Instructions 
+**Building from the command line**
+
+*Build the class files from the package root directory src/main/java*
+```shell
+javac org/json/*.java
+```
+
+*Create the jar file in the current directory*
+```shell
+jar cf json-java.jar org/json/*.class
+```
+
+*Compile a test program that uses the jar (from the package root directory src/test/java)*
+```shell
+javac -cp .;../../main/java/json-java.jar org/json/M2Test.java (Windows)
+javac -cp .:../../main/java/json-java.jar org/json/M2Test.java (Unix Systems)
+```
+
+*Execute the file*
+```shell 
+java -cp .;../../main/java/json-java.jar org/json/M2Test (Windows)
+java -cp .:../../main/java/json-java.jar org/json/M2Test (Unix Systems)
+```
+
+### Running the Unit Tests
+
+navigate to the project root directory in your terminal and execute the test suite with Maven:
+```shell
+mvn clean test
+```
+
+## Milestone 2 
+
+### New Functions
+- **File Path**: `src/main/java/org/json/XML.java`
+
+#### **1. static JSONObject toJSONObject(Reader reader, JSONPointer path)**
+- **Purpose**: Read an XML file into a JSON object, and extract some smaller sub-object inside. Useful for efficiently parsing large XML files to extract targeted data without processing the entire document.
+- **Line Number**: Starts at line 937.
+
+#### **2. static JSONObject toJSONObject(Reader reader, JSONPointer path, JSONObject replacement)**
+- **Purpose**: 
+Modifies a segment of an XML document by replacing it on a certain key path with a new JSONObject. This method is ideal for updating XML data and converting it directly to JSON.
+
+- **Line Number**: Starts at line 989.
+
+#### **3. static boolean parseMile2(XMLTokener x, JSONObject context, String name, XMLParserConfiguration config, String specialKey, JSONObject specialData, boolean isReplaceMode)**
+- **Purpose**: A helper method used internally to navigate and parse XML content, facilitating the conversion and modification processes outlined above. It handles specific tasks like searching for elements, handling replacements, and building the JSONObject.
+- **Line Number**: Starts at line 1034.
+
+
+### New Unit Test
+
+- **File Path**: `src/test/java/org/json/junit/XMLTest.java`
+- **Line Number**: Starts at line 1331.
+
+#### Test Scenarios
+- **Test for Valid Path Conversion**: `testToJSONObjectWithValidPath()` 
+- **Test for Invalid Path**: `testToJSONObjectWithInvalidPath()`
+- **Test for Successful Replacement**: `testToJSONObjectWithInvalidPath()` 
+- **Test for Replacement Path Not Found**: `testToJSONObjectWithReplacement()` 
+
+---
 ![Json-Java logo](https://github.com/stleary/JSON-java/blob/master/images/JsonJava.png?raw=true)
 
 <sub><sup>image credit: Ismael Pérez Ortiz</sup></sub>

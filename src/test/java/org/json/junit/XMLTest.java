@@ -7,6 +7,8 @@ Public Domain.
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -1322,6 +1324,95 @@ public class XMLTest {
             fail("XML document should be parsed as its maximum depth fits the maxNestingDepth " +
                 "parameter of the XMLParserConfiguration used");
         }
+    }
+
+    /****************************** MileStone 2 ******************************/  
+    @Test
+    public void testToJSONObjectWithValidPath() throws JSONException {
+        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
+            "<contact>\n"+
+            "  <nick>Crista </nick>\n"+
+            "  <name>Crista Lopes</name>\n" +
+            "  <address>\n" +
+            "    <street>Ave of Nowhere</street>\n" +
+            "    <zipcode>92614</zipcode>\n" +
+            "  </address>\n" +
+            "</contact>";
+        Reader reader = new StringReader(xml);
+        JSONPointer path = new JSONPointer("/contact/address");
+        
+        JSONObject result = XML.toJSONObject(reader, path);
+        
+        assertNotNull(result);
+        assertEquals("Ave of Nowhere", result.query("/street"));
+        assertEquals("92614", result.query("/zipcode").toString());
+    }
+
+    @Test
+    public void testToJSONObjectWithInvalidPath() {
+        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
+            "<contact>\n"+
+            "  <nick>Crista </nick>\n"+
+            "  <name>Crista Lopes</name>\n" +
+            "  <address>\n" +
+            "    <street>Ave of Nowhere</street>\n" +
+            "    <zipcode>92614</zipcode>\n" +
+            "  </address>\n" +
+            "</contact>";
+        Reader reader = new StringReader(xml);
+        JSONPointer path = new JSONPointer("/contact/nonExistent");
+
+        assertThrows(JSONException.class, () -> {
+            XML.toJSONObject(reader, path);
+        });
+    }
+
+    @Test
+    public void testToJSONObjectWithReplacement() throws JSONException {
+        String xmlString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
+            "<contact>\n"+
+            "  <nick>Crista </nick>\n"+
+            "  <name>Crista Lopes</name>\n" +
+            "  <address>\n" +
+            "    <street>Ave of Nowhere</street>\n" +
+            "    <zipcode>92614</zipcode>\n" +
+            "  </address>\n" +
+            "</contact>";
+
+        JSONObject replacement = new JSONObject("{\"street\":\"Ave of the Arts\"}");
+
+        Reader reader = new StringReader(xmlString);
+        JSONPointer path = new JSONPointer("/contact/address/street");
+        
+        JSONObject result = XML.toJSONObject(reader, path, replacement);
+        
+        assertNotNull(result);
+        assertEquals("Ave of the Arts", result.query("/contact/address/street"));
+    }
+
+    @Test
+    public void testToJSONObjectReplacementPathNotFound() {
+        String xmlString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
+            "<contact>\n"+
+            "  <nick>Crista </nick>\n"+
+            "  <name>Crista Lopes</name>\n" +
+            "  <address>\n" +
+            "    <street>Ave of Nowhere</street>\n" +
+            "    <zipcode>92614</zipcode>\n" +
+            "  </address>\n" +
+            "</contact>";
+
+        JSONObject replacement = new JSONObject("{\"street\":\"Ave of the Arts\"}");
+
+        Reader reader = new StringReader(xmlString);
+        JSONPointer path = new JSONPointer("/contact/nonExistent/nonExistent"); // This path intentionally does not exist in the XML.
+
+        // Depending on implementation, this might not throw an exception but return the original JSONObject without changes.
+        JSONObject result = XML.toJSONObject(reader, path, replacement);
+        
+        // Validate based on expected behavior. In this case, checking if the original structure remains unchanged.
+        assertEquals("Ave of Nowhere", result.query("/contact/address/street"));
+        assertEquals("92614", result.query("/contact/address/zipcode").toString());
     }
 }
 
