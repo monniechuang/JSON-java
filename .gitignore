@@ -1,6 +1,9 @@
 # Compiled class file
 *.class
 
+# Jar file
+*.jar
+
 # ignore eclipse project files
 .project
 .classpath

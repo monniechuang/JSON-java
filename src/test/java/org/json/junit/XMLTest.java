@@ -23,6 +23,7 @@ import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 import org.json.*;
 import org.junit.Rule;
@@ -1413,6 +1414,92 @@ public class XMLTest {
         // Validate based on expected behavior. In this case, checking if the original structure remains unchanged.
         assertEquals("Ave of Nowhere", result.query("/contact/address/street"));
         assertEquals("92614", result.query("/contact/address/zipcode").toString());
+    }
+
+    /****************************** MileStone 3 ******************************/
+    @Test
+    public void testToJSONObjectKeyTransformerAddPrefix() {
+        String xmlString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+            "<contact>\n" +
+            "  <nick>Crista</nick>\n" +
+            "  <name>Crista Lopes</name>\n" +
+            "  <address>\n" +
+            "    <street>Ave of Nowhere</street>\n" +
+            "    <zipcode>92614</zipcode>\n" +
+            "  </address>\n" +
+            "</contact>";
+
+        // Define the key transformer function to prefix keys with "swe262_"
+        Function<String, String> keyTransformer = key -> "swe262_" + key;
+
+        // Create a reader for the XML string
+        Reader reader = new StringReader(xmlString);
+
+        // Call the method under test
+        JSONObject result = XML.toJSONObject(reader, keyTransformer);
+
+        // Assert that the result is not null
+        assertNotNull(result);
+
+        // Assert that the keys are transformed correctly
+        assertTrue(result.has("swe262_contact"));
+        assertTrue(result.getJSONObject("swe262_contact").has("swe262_nick"));
+        assertTrue(result.getJSONObject("swe262_contact").has("swe262_name"));
+        assertTrue(result.getJSONObject("swe262_contact").has("swe262_address"));
+        assertTrue(result.getJSONObject("swe262_contact").getJSONObject("swe262_address").has("swe262_street"));
+        assertTrue(result.getJSONObject("swe262_contact").getJSONObject("swe262_address").has("swe262_zipcode"));
+
+        // Assert specific value to ensure correct parsing and transformation
+        assertEquals("Crista", result.getJSONObject("swe262_contact").getString("swe262_nick"));
+    }
+
+    @Test
+    public void testToJSONObjectKeyTransformerReverse() {
+        String xmlString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+            "<root>\n" +
+            "  <foo>Bar</foo>\n" +
+            "</root>";
+
+        // Key transformer that reverses the key string
+        Function<String, String> keyTransformer = key -> new StringBuilder(key).reverse().toString();
+
+        // Create a reader for the XML string
+        Reader reader = new StringReader(xmlString);
+
+        // Call the method under test
+        JSONObject result = XML.toJSONObject(reader, keyTransformer);
+
+        // Assert that the result is not null
+        assertNotNull(result);
+
+        // Assert that keys have been reversed and its value is unchanged
+        assertTrue(result.getJSONObject("toor").has("oof"));
+        assertEquals("Bar", result.getJSONObject("toor").getString("oof"));
+    }
+
+    @Test
+    public void testToJSONObjectKeyTransformerUpperCase() {
+        String xmlString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+            "<root>\n" +
+            "  <foo>Bar</foo>\n" +
+            "</root>";
+
+        // Key transformer function to convert keys to uppercase
+        Function<String, String> keyTransformer = String::toUpperCase;
+
+        // Create a reader for the XML string
+        Reader reader = new StringReader(xmlString);
+
+        // Call the method under test
+        JSONObject result = XML.toJSONObject(reader, keyTransformer);
+
+        // Assert that the result is not null
+        assertNotNull(result);
+
+        // Assert that the keys have been transformed to upper case
+        assertTrue(result.has("ROOT"));
+        assertTrue(result.getJSONObject("ROOT").has("FOO"));
+        assertEquals("Bar", result.getJSONObject("ROOT").getString("FOO"));
     }
 }
 

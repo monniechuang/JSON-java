@@ -34,33 +34,79 @@ mvn clean test
 # Milestone 2 
 
 ### New Functions
-- **File Path**: `src/main/java/org/json/XML.java`
+File Path: `src/main/java/org/json/XML.java`
 
-#### **1. `static JSONObject toJSONObject(Reader reader, JSONPointer path)`**
+```shell 
+static JSONObject toJSONObject(Reader reader, JSONPointer path)
+```
 - **Purpose**: Read an XML file into a JSON object, and extract some smaller sub-object inside. Useful for efficiently parsing large XML files to extract targeted data without processing the entire document.
 - **Line Number**: Starts at line 937.
 
-#### **2. `static JSONObject toJSONObject(Reader reader, JSONPointer path, JSONObject replacement)`**
+
+```shell 
+static JSONObject toJSONObject(Reader reader, JSONPointer path, JSONObject replacement)
+```
 - **Purpose**: 
 Modifies a segment of an XML document by replacing it on a certain key path with a new JSONObject. This method is ideal for updating XML data and converting it directly to JSON.
-
 - **Line Number**: Starts at line 989.
 
-#### **3. `static boolean parseMile2(XMLTokener x, JSONObject context, String name, XMLParserConfiguration config, String specialKey, JSONObject specialData, boolean isReplaceMode)`**
+
+```shell 
+static boolean parseMile2(XMLTokener x, JSONObject context, String name, XMLParserConfiguration config, String specialKey, JSONObject specialData, boolean isReplaceMode)
+```
 - **Purpose**: A helper method used internally to navigate and parse XML content, facilitating the conversion and modification processes outlined above. It handles specific tasks like searching for elements, handling replacements, and building the JSONObject.
 - **Line Number**: Starts at line 1034.
 
 
 ### New Unit Test
 
-- **File Path**: `src/test/java/org/json/junit/XMLTest.java`
-- **Line Number**: Starts at line 1331.
+File Path: `src/test/java/org/json/junit/XMLTest.java`
+Line Number: Starts at line 1331.
 
 #### Test Scenarios
-- **Test for Valid Path Conversion**: `testToJSONObjectWithValidPath()` 
-- **Test for Invalid Path**: `testToJSONObjectWithInvalidPath()`
-- **Test for Successful Replacement**: `testToJSONObjectWithInvalidPath()` 
-- **Test for Replacement Path Not Found**: `testToJSONObjectWithReplacement()` 
+- **testToJSONObjectWithValidPath()**: Test for Valid Path Conversion
+- **testToJSONObjectWithInvalidPath()**: Test for Invalid Path
+- **testToJSONObjectWithInvalidPath()**: Test for Successful Replacement 
+- **testToJSONObjectWithReplacement()**: Test for Replacement Path Not Found
+
+# Milestone 3
+
+### New Functions
+File Path: `src/main/java/org/json/XML.java`
+
+```shell 
+public static JSONObject toJSONObject(Reader reader, Function keyTransformer)
+```
+- **Purpose**: Converts XML content read from a Reader into a JSONObject. It applies a transformation to every key encountered during the parsing process, according to the logic defined in the keyTransformer function.
+- **Line Number**: Starts at line 1240.
+
+
+```shell 
+private static boolean parseMile3(XMLTokener x, JSONObject context, String name, XMLParserConfiguration config,  Function keyTransformer)
+```
+- **Purpose**: 
+A modified version of the existing parse method, which includes an additional parameter for the keyTransformer and applies it to keys during the parsing process.
+- **Line Number**: Starts at line 1259.
+
+
+#### Performance Implications
+Applying key transformations inside the library during the parsing process, rather than after converting XML to JSON in client code, has significant performance implications:
+
+- **Efficiency:** Transforming keys during parsing avoids the need for a second pass through the JSONObject to modify keys. This is more efficient, especially for large XML documents, as it reduces the overall computation and memory footprint.
+- **Complexity:** Implementing key transformation logic within the library simplifies client code, reducing complexity and potential errors in client-side post-processing.
+- **Performance Overhead:** While adding key transformation during parsing introduces additional checks and function calls for each key, this overhead is mitigated by eliminating the need for a costly second traversal of the resulting JSONObject.
+
+
+### New Unit Test
+
+File Path: `src/test/java/org/json/junit/XMLTest.java`
+Line Number: Starts at line 1420.
+
+#### Test Scenarios
+- **testToJSONObjectKeyTransformerAddPrefix():** Tests the transformation of keys by adding a prefix to each key.
+- **testToJSONObjectKeyTransformerReverse():** Verifies the functionality of reversing each key.
+- **testToJSONObjectKeyTransformerUpperCase():** Ensures that keys are correctly transformed to uppercase.
+Each test case validates not only the transformation of keys but also that the transformation does not alter the associated values in the JSONObject.
 
 ---
 ![Json-Java logo](https://github.com/stleary/JSON-java/blob/master/images/JsonJava.png?raw=true)
