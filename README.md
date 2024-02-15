@@ -60,8 +60,8 @@ static boolean parseMile2(XMLTokener x, JSONObject context, String name, XMLPars
 
 ### New Unit Test
 
-File Path: `src/test/java/org/json/junit/XMLTest.java`
-Line Number: Starts at line 1331.
+- File Path: `src/test/java/org/json/junit/XMLTest.java`
+- Line Number: Starts at line 1331.
 
 #### Test Scenarios
 - **testToJSONObjectWithValidPath()**: Test for Valid Path Conversion
@@ -99,8 +99,8 @@ Applying key transformations inside the library during the parsing process, rath
 
 ### New Unit Test
 
-File Path: `src/test/java/org/json/junit/XMLTest.java`
-Line Number: Starts at line 1420.
+- File Path: `src/test/java/org/json/junit/XMLTest.java`
+- Line Number: Starts at line 1420.
 
 #### Test Scenarios
 - **testToJSONObjectKeyTransformerAddPrefix():** Tests the transformation of keys by adding a prefix to each key.
