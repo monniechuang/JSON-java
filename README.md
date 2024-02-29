@@ -14,14 +14,14 @@ jar cf json-java.jar org/json/*.class
 
 *Compile a test program that uses the jar (from the package root directory src/test/java)*
 ```shell
-javac -cp .;../../main/java/json-java.jar org/json/M2Test.java (Windows)
-javac -cp .:../../main/java/json-java.jar org/json/M2Test.java (Unix Systems)
+javac -cp .;../../main/java/json-java.jar org/json/MilestoneTest.java (Windows)
+javac -cp .:../../main/java/json-java.jar org/json/MilestoneTest.java (Unix Systems)
 ```
 
 *Execute the file*
 ```shell 
-java -cp .;../../main/java/json-java.jar org/json/M2Test (Windows)
-java -cp .:../../main/java/json-java.jar org/json/M2Test (Unix Systems)
+java -cp .;../../main/java/json-java.jar org/json/MilestoneTest (Windows)
+java -cp .:../../main/java/json-java.jar org/json/MilestoneTest (Unix Systems)
 ```
 
 ### Running the Unit Tests
@@ -123,7 +123,7 @@ public static class JSONNode{}
 ### Streaming Operations
 ```shell 
 public Stream<JSONNode> toStream()
-public Stream<JSONNode> toStream(String path, Object value)
+private Stream<JSONNode> toStream(String path, Object value)
 ```
 - **Purpose**: Allows converting a JSONObject into a Stream of JSONNode objects for streaming operations, representing each node in the JSON object tree.
 - **Line Number**: Starts at line 2921.

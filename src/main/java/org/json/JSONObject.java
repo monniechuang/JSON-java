@@ -2922,7 +2922,7 @@ public class JSONObject {
         return toStream("", this);
     }
 
-    public Stream<JSONNode> toStream(String path, Object value) {
+    private Stream<JSONNode> toStream(String path, Object value) {
         if (value instanceof JSONObject) {
             JSONObject obj = (JSONObject) value;
             return obj.keySet().stream()
