@@ -26,7 +26,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.regex.Pattern;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static org.json.NumberConversionUtil.potentialNumber;
 import static org.json.NumberConversionUtil.stringToNumber;
@@ -2883,6 +2886,69 @@ public class JSONObject {
             "JavaBean object contains recursively defined member variable of key " + quote(key)
         );
     }
+    /****************************** MileStone 4 ******************************/  
+    /**
+     * Represents a node in the JSON object tree, containing the key, value, and path from the root.
+     */
+    public static class JSONNode {
+        private String key;
+        private Object value;
+        private String path;
 
+        public JSONNode(String key, Object value, String path) {
+            this.key = key;
+            this.value = value;
+            this.path = path;
+        }
 
+        public String getKey() {
+            return key;
+        }
+
+        public Object getValue() {
+            return value;
+        }
+
+        public String getPath() {
+            return path;
+        }
+    }
+
+    /**
+     * Converts this JSONObject into a Stream of JSONNode objects, allowing for streaming operations.
+     * @return a Stream of JSONNode objects representing each node in the JSON object tree.
+     */
+    public Stream<JSONNode> toStream() {
+        return toStream("", this);
+    }
+
+    public Stream<JSONNode> toStream(String path, Object value) {
+        if (value instanceof JSONObject) {
+            JSONObject obj = (JSONObject) value;
+            return obj.keySet().stream()
+                .flatMap(key -> {
+                    // For each key in JSONObject, update the path
+                    String newPath = path.isEmpty() ? key : path + "/" + key;
+                    // Recursively call toStream, passing the new path and value
+                    return toStream(newPath, obj.get(key));
+                });
+        } else if (value instanceof JSONArray) {
+            JSONArray array = (JSONArray) value;
+            return IntStream.range(0, array.length())
+                .mapToObj(i -> {
+                    // For each element in JSONArray, update the path with its index
+                    String newPath = path + "[" + i + "]";
+                    return toStream(newPath, array.get(i));
+                })
+                .flatMap(Function.identity());
+        } else {
+            // Extract the last key name from the path
+            String key = path.contains("/") ? path.substring(path.lastIndexOf('/') + 1) : path;
+            // Special handling for array indices as they are not actually key names
+            if (key.matches("\\[\\d+\\]")) {
+                key = ""; // Array indices are not treated as key names
+            }
+            return Stream.of(new JSONNode(key, value, path));
+        }
+    }
 }

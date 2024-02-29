@@ -7,8 +7,10 @@ import org.json.JSONException;
 import org.json.JSONPointer;
 import org.json.JSONObject;
 import org.json.XML;
+import java.util.List;
+import java.util.stream.Collectors;
 
-public class M2Test {
+public class MilestoneTest {
     public static void main(String[] args) {
         String xmlString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
             "<contact>\n"+
@@ -66,5 +68,38 @@ public class M2Test {
         } catch (JSONException e) {
             System.out.println(e);
         }
+
+        System.out.println("----------Milestone4----------");
+
+        try {
+            // Convert XML to JSONObject
+            String xmlString2 = "<Books><book><title>AAA</title><author>ASmith</author></book><book><title>BBB</title><author>BSmith</author></book></Books>";
+            JSONObject obj = XML.toJSONObject(xmlString2);
+        
+            // Iterate through JSONObject and print node information
+            obj.toStream().forEach(node -> {
+                System.out.println("Key: " + node.getKey() + ", Value: " + node.getValue() + ", Path: " + node.getPath());
+            });
+            
+            // Extract all book titles
+            List<String> titles = obj.toStream()
+                .filter(node -> node.getKey().equals("title"))
+                .map(node -> node.getValue().toString())
+                .collect(Collectors.toList());
+        
+            // Print extracted titles
+            System.out.println("Book titles: " + titles);
+        
+            // Filter nodes where author name contains "Smith" and replace "Smith" with "MSWE", then print
+            obj.toStream().filter(node -> node.getKey() != null && node.getKey().equals("author"))
+                .forEach(node -> {
+                    // Replace "Smith" with "MSWE" and print
+                    System.out.println("Node path: " + node.getPath() + ", Updated Value: " + node.getValue().toString().replace("Smith", "MSWE"));
+                });
+        
+        } catch (JSONException e) {
+            System.out.println(e);
+        }
+        
     }
 }

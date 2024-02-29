@@ -26,6 +26,7 @@ import java.math.BigInteger;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.json.CDL;
 import org.json.JSONArray;
@@ -3815,6 +3816,42 @@ public class JSONObjectTest {
         HashMap<String, Object> nestedMap = new HashMap<>();
         nestedMap.put("t", buildNestedMap(maxDepth - 1));
         return nestedMap;
+    }
+
+    /****************************** MileStone 4 ******************************/
+    @Test
+    public void testToStream() {
+        String xmlString = "<Books><book><title>AAA</title><author>ASmith</author></book><book><title>BBB</title><author>BSmith</author></book></Books>";
+        JSONObject obj = XML.toJSONObject(xmlString);
+        
+        long count = obj.toStream().count();
+        assertEquals("Should have four nodes in total.", 4, count);
+    }
+    
+    @Test
+    public void testToStreamExtractValues() {
+        String xmlString = "<Books><book><title>AAA</title><author>ASmith</author></book><book><title>BBB</title><author>BSmith</author></book></Books>";
+        JSONObject obj = XML.toJSONObject(xmlString);
+
+        List<String> titles = obj.toStream()
+                .filter(node -> "title".equals(node.getKey()))
+                .map(node -> node.getValue().toString())
+                .collect(Collectors.toList());
+
+        assertEquals("Extracted book titles should match.", List.of("AAA", "BBB"), titles);
+    }
+    
+    @Test
+    public void testToStreamFilterReplace() {
+        String xmlString = "<Books><book><title>AAA</title><author>ASmith</author></book><book><title>BBB</title><author>BSmith</author></book></Books>";
+        JSONObject obj = XML.toJSONObject(xmlString);
+
+        List<String> modifiedAuthors = obj.toStream()
+                .filter(node -> node.getKey() != null && "author".equals(node.getKey()))
+                .map(node -> node.getValue().toString().replace("Smith", "MSWE"))
+                .collect(Collectors.toList());
+
+        assertTrue("Authors' names should be modified correctly.", modifiedAuthors.containsAll(List.of("AMSWE", "BMSWE")));
     }
 
 }

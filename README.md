@@ -108,6 +108,43 @@ Applying key transformations inside the library during the parsing process, rath
 - **testToJSONObjectKeyTransformerUpperCase():** Ensures that keys are correctly transformed to uppercase.
 Each test case validates not only the transformation of keys but also that the transformation does not alter the associated values in the JSONObject.
 
+# Milestone 4
+
+### New Functionality: Streaming JSON Nodes
+File Path: `src/main/java/org/json/JSONObject.java`
+
+### JSONNode Class
+```shell 
+public static class JSONNode{}
+```
+- **Purpose**: Represents a node in the JSON object tree, containing the key, value, and path from the root.
+- **Line Number**: Starts at line 2893.
+
+### Streaming Operations
+```shell 
+public Stream<JSONNode> toStream()
+public Stream<JSONNode> toStream(String path, Object value)
+```
+- **Purpose**: Allows converting a JSONObject into a Stream of JSONNode objects for streaming operations, representing each node in the JSON object tree.
+- **Line Number**: Starts at line 2921.
+
+
+### Implementation Details
+- **JSONObject to Stream Conversion**: Facilitates streaming operations on JSON objects by converting them into a stream of nodes.
+- **Path Handling**: Each node in the stream includes the path from the root to the node, aiding in identifying the node's location within the JSON structure.
+- **Key Transformation**: Special handling for array indices, treating them differently from regular keys to accurately represent the JSON structure.
+
+
+### New Unit Test
+
+- File Path: `src/test/java/org/json/junit/JSONObjectTest.java`
+- Line Number: Starts at line 3822.
+
+#### Test Scenarios
+- **testToStream**: Verifies the total number of nodes in the stream matches the expected count.
+- **testToStreamExtractValues**: Tests extraction of specific values (e.g., book titles) from the stream, validating correct filtering and mapping operations.
+- **testToStreamFilterReplace**: Checks the ability to filter nodes and apply transformations (e.g., modifying author names) within the stream, ensuring the transformations are applied as expected.
+
 ---
 ![Json-Java logo](https://github.com/stleary/JSON-java/blob/master/images/JsonJava.png?raw=true)
 
