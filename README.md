@@ -113,14 +113,14 @@ Each test case validates not only the transformation of keys but also that the t
 ### New Functionality: Streaming JSON Nodes
 File Path: `src/main/java/org/json/JSONObject.java`
 
-### JSONNode Class
+#### JSONNode Class
 ```shell 
 public static class JSONNode{}
 ```
 - **Purpose**: Represents a node in the JSON object tree, containing the key, value, and path from the root.
 - **Line Number**: Starts at line 2893.
 
-### Streaming Operations
+#### Streaming Operations
 ```shell 
 public Stream<JSONNode> toStream()
 private Stream<JSONNode> toStream(String path, Object value)
@@ -129,7 +129,7 @@ private Stream<JSONNode> toStream(String path, Object value)
 - **Line Number**: Starts at line 2921.
 
 
-### Implementation Details
+#### Implementation Details
 - **JSONObject to Stream Conversion**: Facilitates streaming operations on JSON objects by converting them into a stream of nodes.
 - **Path Handling**: Each node in the stream includes the path from the root to the node, aiding in identifying the node's location within the JSON structure.
 - **Key Transformation**: Special handling for array indices, treating them differently from regular keys to accurately represent the JSON structure.
