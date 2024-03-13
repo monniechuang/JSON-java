@@ -1504,6 +1504,7 @@ public class XMLTest {
         assertEquals("Bar", result.getJSONObject("ROOT").getString("FOO"));
     }
 
+    /****************************** MileStone 5 ******************************/
     @Test
     public void testToJSONObjectAsync() throws Exception {
         // Mock input data

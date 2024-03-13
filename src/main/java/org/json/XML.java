@@ -1465,20 +1465,41 @@ public class XML {
         }
     }
     /****************************** MileStone 5 ******************************/  
+    /**
+     * Represents a helper class for managing asynchronous conversion of XML data to JSON objects.
+     */
     public static class FutureObject {
         private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
+        /**
+         * Asynchronously converts XML data from a reader to a JSONObject using a custom key transformer.
+         *
+         * @param reader The reader containing the XML data.
+         * @param keyTransformer A function defining the transformation logic for XML keys to JSON keys.
+         * @return A Future representing the result of the asynchronous operation.
+         */
         public Future<JSONObject> toJSONObject(Reader reader, Function keyTransformer) {
             return executor.submit(() -> XML.toJSONObject(reader, keyTransformer));
         }
 
+        /**
+         * Stops the executor service associated with this FutureObject.
+         */
         public void stopFuture() {
             executor.shutdown();
         }
     }
 
+    /**
+     * Converts XML data into a JSONObject asynchronously using a custom key transformer.
+     *
+     * @param reader The reader containing the XML data.
+     * @param keyTransformer A function defining the transformation logic for XML keys to JSON keys.
+     * @param exceptionHandler A consumer for handling exceptions during the conversion process.
+     * @return A Future representing the result of the asynchronous operation.
+     */
     public static Future<JSONObject> toJSONObject(Reader reader, Function<String, String> keyTransformer,
-                                                  Consumer<Exception> exceptionHandler) {
+                                                Consumer<Exception> exceptionHandler) {
         if (keyTransformer == null) {
             exceptionHandler.accept(new IllegalArgumentException("Key transformer cannot be null"));
             return null;
@@ -1492,6 +1513,4 @@ public class XML {
         }
         return future;
     }
-
-    
 }

@@ -145,6 +145,31 @@ private Stream<JSONNode> toStream(String path, Object value)
 - **testToStreamExtractValues**: Tests extraction of specific values (e.g., book titles) from the stream, validating correct filtering and mapping operations.
 - **testToStreamFilterReplace**: Checks the ability to filter nodes and apply transformations (e.g., modifying author names) within the stream, ensuring the transformations are applied as expected.
 
+# Milestone 5
+File Path: `src/main/java/org/json/XML.java`
+
+### Helper Class
+```shell 
+public static class FutureObject{}
+```
+- **Purpose**: A helper class for managing asynchronous conversion tasks. It includes a method toJSONObject for asynchronously converting XML data into a JSONObject and a method stopFuture for stopping the associated executor service.
+- **Line Number:** Starts at line 1471.
+
+### New Function
+```shell 
+public static Future<JSONObject> toJSONObject(Reader reader, Function<String, String> keyTransformer, Consumer<Exception> exceptionHandler)
+```
+- **Purpose**: Initiates the asynchronous conversion of XML data into a JSONObject. It requires a Reader containing the XML data, a key transformer function, and an exception handler.
+- **Line Number:** Starts at line 1501.
+
+### New Unit Test
+
+- File Path: `src/test/java/org/json/junit/XMLTest.java`
+- Line Number: Starts at line 1508.
+
+#### Test Scenarios
+- **testToJSONObjectAsync():** Tests proper functioning of the asynchronous XML to JSON conversion process.
+
 ---
 ![Json-Java logo](https://github.com/stleary/JSON-java/blob/master/images/JsonJava.png?raw=true)
 
