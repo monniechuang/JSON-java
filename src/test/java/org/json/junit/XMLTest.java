@@ -23,6 +23,8 @@ import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Future;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import org.json.*;
@@ -1500,6 +1502,32 @@ public class XMLTest {
         assertTrue(result.has("ROOT"));
         assertTrue(result.getJSONObject("ROOT").has("FOO"));
         assertEquals("Bar", result.getJSONObject("ROOT").getString("FOO"));
+    }
+
+    @Test
+    public void testToJSONObjectAsync() throws Exception {
+        // Mock input data
+        String xmlData = "<root><item>value</item></root>";
+        Reader reader = new StringReader(xmlData);
+
+        // Define key transformer function
+        Function<String, String> keyTransformer = s -> "swe262_" + s;
+
+        // Define exception handler
+        Consumer<Exception> exceptionHandler = e -> System.out.println("Exception occurred: " + e.getMessage());
+
+        // Call asynchronous method
+        Future<JSONObject> future = XML.toJSONObject(reader, keyTransformer, exceptionHandler);
+
+        // Await the result
+        JSONObject result = future.get();
+
+        // Validate the result
+        assertNotNull(result);
+        assertEquals("[{\"swe262_root\":{\"swe262_item\":\"value\"}}]", "[" + result.toString() + "]");
+
+        // Clean up
+        reader.close();
     }
 }
 

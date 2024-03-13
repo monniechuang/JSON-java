@@ -6,9 +6,15 @@ Public Domain.
 
 import java.io.Reader;
 import java.io.StringReader;
+import java.io.Writer;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Iterator;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static org.json.NumberConversionUtil.potentialNumber;
@@ -1458,4 +1464,34 @@ public class XML {
             }
         }
     }
+    /****************************** MileStone 5 ******************************/  
+    public static class FutureObject {
+        private final ExecutorService executor = Executors.newSingleThreadExecutor();
+
+        public Future<JSONObject> toJSONObject(Reader reader, Function keyTransformer) {
+            return executor.submit(() -> XML.toJSONObject(reader, keyTransformer));
+        }
+
+        public void stopFuture() {
+            executor.shutdown();
+        }
+    }
+
+    public static Future<JSONObject> toJSONObject(Reader reader, Function<String, String> keyTransformer,
+                                                  Consumer<Exception> exceptionHandler) {
+        if (keyTransformer == null) {
+            exceptionHandler.accept(new IllegalArgumentException("Key transformer cannot be null"));
+            return null;
+        }
+
+        FutureObject futureJsonObject = new FutureObject();
+        Future<JSONObject> future = futureJsonObject.toJSONObject(reader, keyTransformer);
+
+        if (future.isDone()) {
+            futureJsonObject.stopFuture();
+        }
+        return future;
+    }
+
+    
 }
